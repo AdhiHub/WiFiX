@@ -41,16 +41,16 @@ attacks — all from the terminal.
 
 ## Modules
 
-| # | Module | What It Does |
-|---|--------|-------------|
-| 1 | **Scan Networks** | List all nearby APs with SSID, BSSID, channel, signal level, encryption type, WPS status |
-| 2 | **Password Testing** | Weak password generation (250+ candidates), wordlist-based cracking (aircrack-ng/hashcat), default router password database (40+ brands) |
-| 3 | **Saved Passwords** | Recover stored WiFi passwords from system (Linux NetworkManager / Windows netsh) |
-| 4 | **Handshake Capture** | Capture WPA 4-way handshake for authorized testing |
-| 5 | **Signal Monitor** | Real-time RSSI monitoring with visual signal bars, live refresh |
-| 6 | **WPS Check** | Identify networks with WPS enabled |
-| 7 | **Client Discovery** | Find devices connected to access points |
-| 8 | **Deauth Detection** | Monitor for deauthentication attack packets |
+| # | Module | What It Does | Built-in WiFi | Monitor-Mode Adapter Needed |
+|---|--------|-------------|:---:|:---:|
+| 1 | **Scan Networks** | List all nearby APs with SSID, BSSID, channel, signal level, encryption type, WPS status | ✅ Yes | ❌ No |
+| 2 | **Password Testing** | Weak password generation (250+ candidates), wordlist-based cracking (aircrack-ng/hashcat), default router password database (40+ brands) | ✅ Yes | ❌ No |
+| 3 | **Saved Passwords** | Recover stored WiFi passwords from system (Linux NetworkManager / Windows netsh) | ✅ Yes | ❌ No |
+| 4 | **Handshake Capture** | Capture WPA 4-way handshake for authorized testing | ❌ No | ✅ Yes |
+| 5 | **Signal Monitor** | Real-time RSSI monitoring with visual signal bars, live refresh | ✅ Yes | ❌ No |
+| 6 | **WPS Check** | Identify networks with WPS enabled | ✅ Yes | ❌ No |
+| 7 | **Client Discovery** | Find devices connected to access points | ❌ No | ✅ Yes |
+| 8 | **Deauth Detection** | Monitor for deauthentication attack packets | ❌ No | ✅ Yes |
 
 ---
 
@@ -201,12 +201,35 @@ WiFiX generates password candidates based on:
 
 ## Requirements
 
-- **Linux** (recommended) with wireless adapter supporting monitor mode
+### Software
+- **Linux** (recommended) or Windows (partial — only `recover` works)
 - Python 3.6+
 - `wireless-tools` (iwconfig, iwlist)
 - `iw`
 - Optional: `aircrack-ng`, `hashcat` (for handshake cracking)
 - Root privileges for most operations
+
+### Hardware
+
+| Module | Built-in WiFi | External Adapter with Monitor Mode |
+|--------|:---:|:---:|
+| scan | ✅ | ❌ |
+| password | ✅ | ❌ |
+| recover | ✅ | ❌ |
+| monitor | ✅ | ❌ |
+| wps | ✅ | ❌ |
+| handshake | ❌ | ✅ |
+| clients | ❌ | ✅ |
+| deauth | ❌ | ✅ |
+
+**What is monitor mode?**  
+Most laptop WiFi cards only support "managed mode" (connecting to networks). Monitor mode allows the card to capture all wireless traffic without connecting — needed for handshake capture, client discovery, and deauth detection.
+
+**Recommended adapters** (RTL8812AU / RTL8187 chipset):
+- Alfa AWUS036ACH
+- Panda PAU09
+- TP-Link TL-WN722N (v1 only)
+- Any adapter with RTL8812AU, RTL8187, or AR9271 chipset
 
 ---
 
@@ -219,7 +242,7 @@ A: No. It tests weak/common passwords and wordlists. Strong passwords won't be c
 A: Partial. Network scan requires Linux. Saved password recovery works on Windows.
 
 **Q: Do I need a special WiFi adapter?**  
-A: For scanning — no. For handshake capture/deauth — yes, needs monitor mode support.
+A: Modules 1, 2, 3, 5, 6 work with built-in WiFi. Modules 4 (handshake), 7 (clients), 8 (deauth) need a monitor-mode-capable adapter (e.g., Alfa AWUS036ACH, Panda PAU09, TL-WN722N v1). See the Hardware section above.
 
 **Q: Is this illegal?**  
 A: Only use on networks you own. Unauthorized access is a crime.
